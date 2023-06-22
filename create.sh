@@ -4,7 +4,7 @@
 #bash tools/terraform/install.sh
 
 
-cd minikube_aws
+#cd minikube_aws
 
 if [ ! -f "~/.ssh/id_rsa.pub" ]; then
   cat /dev/zero | ssh-keygen -q -N ""
