@@ -12,7 +12,7 @@ echo
 #echo "https://aws.amazon.com/marketplace/pp/prodview-foff247vr2zfw?ref_=aws-mp-console-subscription-detail"
 read -p ""
 
-rm -rf .terraform*
+sudo rm -rf .terraform*
 
 sudo yum -y install terraform
 

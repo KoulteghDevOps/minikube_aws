@@ -43,13 +43,9 @@ module "ec2_instance" {
   create_spot_instance = true
 #  spot_price           = "0.60"
   spot_type              = "persistent"
-  cluster_name           = "minikube-instance"
   instance_type          = "t3.medium"
-  ssh_public_key = "~/.ssh/id_rsa.pub"
-#  key_name               = "user1"
-  aws_subnet_id = element(lookup(module.vpc, "public_subnets", null), 0)
-  hosted_zone = data.external.zone.result.id
-#  hosted_zone_private = false
+  key_name = "minikube"
+  subnet_id = element(lookup(module.vpc, "public_subnets", null), 0)
 
   tags = {
     Terraform   = "true"
