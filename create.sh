@@ -19,5 +19,7 @@ read -p ""
 
 rm -rf .terraform*
 
+yum -y install terraform
+
 terraform init
 terraform apply -auto-approve
