@@ -76,8 +76,8 @@ resource "aws_instance" "minikube" {
   }
   key_name = "my-key-pair"  # Replace with the name of your EC2 key
 
-  provisioner "local-exec" {
-    command = [
+  provisioner "remote-exec" {
+    inline = [
       "sudo yum update -y",
       "sudo yum install -y curl conntrack-tools",
       "sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo",
