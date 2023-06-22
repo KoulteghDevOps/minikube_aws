@@ -58,7 +58,7 @@ module "ec2_instance" {
   }
 
   provisioner "local-exec" {
-    inline = [
+    command = [
       "sudo yum update -y",
       "sudo yum install -y curl conntrack-tools",
       "sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo",
