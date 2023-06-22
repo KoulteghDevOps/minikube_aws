@@ -47,12 +47,6 @@ module "ec2_instance" {
   key_name = "minikube"
   subnet_id = element(lookup(module.vpc, "public_subnets", null), 0)
 
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-    Name        = "minikube-instance"
-  }
-
   provisioner "local-exec" {
     command = [
       "sudo yum update -y",
@@ -68,6 +62,12 @@ module "ec2_instance" {
       "sudo rpm -ivh minikube-latest.x86_64.rpm",
       "minikube start --driver=docker"
     ]
+  }
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+    Name        = "minikube-instance"
   }
 }
 
