@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo su -
+#sudo su -
 
 if [ ! -f "~/.ssh/id_rsa.pub" ]; then
   cat /dev/zero | ssh-keygen -q -N ""
