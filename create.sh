@@ -16,5 +16,5 @@ rm -rf .terraform*
 
 sudo yum -y install terraform
 
-terraform init
-terraform apply -auto-approve
+sudo terraform init
+sudo terraform apply -auto-approve
