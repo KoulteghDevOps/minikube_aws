@@ -35,17 +35,46 @@ module "vpc" {
   }
 }
 
-module "ec2_instance" {
-  source  = "terraform-aws-modules/ec2-instance/aws"
+#module "ec2_instance" {
+#  source = "terraform-aws-modules/ec2-instance/aws"
+#
+#  name = "minikube-spot-instance"
+#
+#  create_spot_instance = true
+#  #  spot_price           = "0.60"
+#  spot_type            = "persistent"
+#  instance_type        = "t3.medium"
+#  key_name             = "minikube"
+#  subnet_id            = element(lookup(module.vpc, "public_subnets", null), 0)
+#
+#  tags = {
+#    Terraform   = "true"
+#    Environment = "dev"
+#    Name        = "minikube-instance"
+#  }
+#}
 
+resource "aws_instance" "minikube" {
+  ami           = data.aws_ami.ami.id
   name = "minikube-spot-instance"
 
   create_spot_instance = true
-#  spot_price           = "0.60"
-  spot_type              = "persistent"
-  instance_type          = "t3.medium"
-  key_name = "minikube"
-  subnet_id = element(lookup(module.vpc, "public_subnets", null), 0)
+  #  spot_price           = "0.60"
+  spot_type            = "persistent"
+  #  ami           = "ami-0c94855ba95c71c99"  # Replace with the CentOS 8 AMI ID in your desired region
+  instance_type = "t3.medium"  # Replace with your desired instance type
+  aws_region    = "us-east-1"
+  cluster_name  = "minikube-instance"
+  aws_instance_type = "t3.medium"
+  ssh_public_key = "~/.ssh/id_rsa.pub"
+  aws_subnet_id = element(lookup(module.vpc, "public_subnets", null), 0)
+  hosted_zone = data.external.zone.result.id
+  hosted_zone_private = false
+
+  tags = {
+    Name = "minikube-instance"
+  }
+  key_name = "my-key-pair"  # Replace with the name of your EC2 key
 
   provisioner "local-exec" {
     command = [
@@ -62,12 +91,6 @@ module "ec2_instance" {
       "sudo rpm -ivh minikube-latest.x86_64.rpm",
       "minikube start --driver=docker"
     ]
-  }
-
-  tags = {
-    Terraform   = "true"
-    Environment = "dev"
-    Name        = "minikube-instance"
   }
 }
 
