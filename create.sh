@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo -i
+sudo su -
 
 if [ ! -f "~/.ssh/id_rsa.pub" ]; then
   cat /dev/zero | ssh-keygen -q -N ""
@@ -14,7 +14,7 @@ read -p ""
 
 rm -rf .terraform*
 
-yum -y install terraform
+sudo yum -y install terraform
 
 terraform init
 terraform apply -auto-approve
