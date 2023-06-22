@@ -49,7 +49,7 @@ module "ec2_instance" {
 #  key_name               = "user1"
   aws_subnet_id = element(lookup(module.vpc, "public_subnets", null), 0)
   hosted_zone = data.external.zone.result.id
-  hosted_zone_private = false
+#  hosted_zone_private = false
 
   tags = {
     Terraform   = "true"
@@ -57,7 +57,7 @@ module "ec2_instance" {
     Name        = "minikube-instance"
   }
 
-  provisioner "remote-exec" {
+  provisioner "local-exec" {
     inline = [
       "sudo yum update -y",
       "sudo yum install -y curl conntrack-tools",
