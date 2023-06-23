@@ -31,7 +31,7 @@ resource "tls_private_key" "rsa" {
 resource "aws_security_group" "allow_tls" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic"
-  vpc_id      = module.vpc.result
+  vpc_id      = module.vpc.id
 
   ingress {
     description = "SSH from VPC"
