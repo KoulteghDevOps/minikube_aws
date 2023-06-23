@@ -18,6 +18,50 @@ data "external" "zone" {
   program = ["bash", "${path.root}/route53"]
 }
 
+resource "aws_key_pair" "TF_key" {
+  key_name       = "minikube"
+  public_key     = tls_private_key.rsa.public_key_openssh
+}
+
+resource "tls_private_key" "rsa" {
+  algorithm = "RSA"
+  rsa_bits = 4096
+}
+
+resource "aws_security_group" "allow_tls" {
+  name        = "allow_tls"
+  description = "Allow TLS inbound traffic"
+  vpc_id      = module.vpc.result
+
+  ingress {
+    description = "SSH from VPC"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = element(lookup(module.vpc, "public_subnets", null), 0) #[aws_vpc.main.cidr_block]
+  }
+
+  ingress {
+    description = "TLS from VPC"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = element(lookup(module.vpc, "public_subnets", null), 0) #[aws_vpc.main.cidr_block]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "allow_tls"
+  }
+}
+
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
@@ -35,32 +79,33 @@ module "vpc" {
   }
 }
 
-#module "ec2_instance" {
-#  source = "terraform-aws-modules/ec2-instance/aws"
-#
-#  name = "minikube-spot-instance"
-#
-#  create_spot_instance = true
-#  #  spot_price           = "0.60"
-#  spot_type            = "persistent"
-#  instance_type        = "t3.medium"
-#  key_name             = "minikube"
-#  subnet_id            = element(lookup(module.vpc, "public_subnets", null), 0)
-#
-#  tags = {
-#    Terraform   = "true"
-#    Environment = "dev"
-#    Name        = "minikube-instance"
-#  }
-#}
+module "ec2_instance" {
+  source = "terraform-aws-modules/ec2-instance/aws"
 
-resource "aws_instance" "minikube" {
-  ami           = data.aws_ami.ami.id
   name = "minikube-spot-instance"
 
   create_spot_instance = true
   #  spot_price           = "0.60"
   spot_type            = "persistent"
+  instance_type        = "t3.medium"
+  key_name             = "minikube"
+  subnet_id            = element(lookup(module.vpc, "public_subnets", null), 0)
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+    Name        = "minikube-instance"
+  }
+}
+
+
+resource "aws_instance" "minikube" {
+  ami           = data.aws_ami.ami.id
+#  name = "minikube-spot-instance"
+
+#  create_spot_instance = true
+  #  spot_price           = "0.60"
+#  spot_type            = "persistent"
   #  ami           = "ami-0c94855ba95c71c99"  # Replace with the CentOS 8 AMI ID in your desired region
   instance_type = "t3.medium"  # Replace with your desired instance type
   aws_region    = "us-east-1"
