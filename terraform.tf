@@ -91,7 +91,7 @@ module "ec2_instance" {
   #  spot_price           = "0.60"
   spot_type            = "persistent"
   instance_type        = "t3.medium"
-  key_name             = "minikube"
+#  key_name             = "minikube"
   subnet_id            = element(lookup(module.vpc, "public_subnets", null), 0)
 
   user_data = <<-EOT
