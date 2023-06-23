@@ -31,7 +31,7 @@ resource "tls_private_key" "rsa" {
 resource "aws_security_group" "allow_tls" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic"
-  vpc_id      = module.vpc.id
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     description = "SSH from VPC"
@@ -62,7 +62,7 @@ resource "aws_security_group" "allow_tls" {
   }
 }
 
-module "vpc" {
+module "vpc" "vpc_default" {
   source = "terraform-aws-modules/vpc/aws"
 
   name = "minikube"
