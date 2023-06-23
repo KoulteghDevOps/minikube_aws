@@ -66,8 +66,8 @@ module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
   name = "minikube"
-#  cidr = "10.0.0.0/16"
-  cidr_blocks = "10.0.0.0/16"
+  cidr = "10.0.0.0/16"
+#  cidr_blocks = "10.0.0.0/16"
   azs             = ["us-east-1a", "us-east-1b"]
   private_subnets = []
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
