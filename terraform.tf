@@ -38,7 +38,8 @@ resource "aws_security_group" "allow_tls" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = module.vpc.cidr_blocks #[aws_vpc.main.cidr_block]
+#    cidr_blocks = module.vpc.cidr_blocks #
+    cidr        = module.vpc.cidr
   }
 
   ingress {
@@ -46,7 +47,8 @@ resource "aws_security_group" "allow_tls" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = module.vpc.cidr_blocks #[aws_vpc.main.cidr_block]
+#    cidr_blocks = module.vpc.cidr_blocks #[aws_vpc.main.cidr_block]
+    cidr        = module.vpc.cidr
   }
 
   egress {
