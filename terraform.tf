@@ -99,45 +99,45 @@ module "ec2_instance" {
 }
 
 
-resource "aws_instance" "minikube" {
-  ami           = data.aws_ami.ami.id
-#  name = "minikube-spot-instance"
-
-#  create_spot_instance = true
-  #  spot_price           = "0.60"
-#  spot_type            = "persistent"
-  #  ami           = "ami-0c94855ba95c71c99"  # Replace with the CentOS 8 AMI ID in your desired region
-  instance_type = "t3.medium"  # Replace with your desired instance type
-  aws_region    = "us-east-1"
-  cluster_name  = "minikube-instance"
-  aws_instance_type = "t3.medium"
-  ssh_public_key = "~/.ssh/id_rsa.pub"
-  aws_subnet_id = element(lookup(module.vpc, "public_subnets", null), 0)
-  hosted_zone = data.external.zone.result.id
-  hosted_zone_private = false
-
-  tags = {
-    Name = "minikube-instance"
-  }
-  key_name = "my-key-pair"  # Replace with the name of your EC2 key
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo yum update -y",
-      "sudo yum install -y curl conntrack-tools",
-      "sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo",
-      "sudo dnf install -y docker-ce docker-ce-cli containerd.io",
-      "sudo systemctl start docker",
-      "sudo systemctl enable docker",
-      "sudo curl -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"",
-      "sudo chmod +x kubectl",
-      "sudo mv kubectl /usr/local/bin/",
-      "curl -LO \"https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm\"",
-      "sudo rpm -ivh minikube-latest.x86_64.rpm",
-      "minikube start --driver=docker"
-    ]
-  }
-}
+#resource "aws_instance" "minikube" {
+#  ami           = data.aws_ami.ami.id
+##  name = "minikube-spot-instance"
+#
+##  create_spot_instance = true
+#  #  spot_price           = "0.60"
+##  spot_type            = "persistent"
+#  #  ami           = "ami-0c94855ba95c71c99"  # Replace with the CentOS 8 AMI ID in your desired region
+#  instance_type = "t3.medium"  # Replace with your desired instance type
+#  aws_region    = "us-east-1"
+#  cluster_name  = "minikube-instance"
+#  aws_instance_type = "t3.medium"
+#  ssh_public_key = "~/.ssh/id_rsa.pub"
+#  aws_subnet_id = element(lookup(module.vpc, "public_subnets", null), 0)
+#  hosted_zone = data.external.zone.result.id
+#  hosted_zone_private = false
+#
+#  tags = {
+#    Name = "minikube-instance"
+#  }
+#  key_name = "my-key-pair"  # Replace with the name of your EC2 key
+#
+#  provisioner "remote-exec" {
+#    inline = [
+#      "sudo yum update -y",
+#      "sudo yum install -y curl conntrack-tools",
+#      "sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo",
+#      "sudo dnf install -y docker-ce docker-ce-cli containerd.io",
+#      "sudo systemctl start docker",
+#      "sudo systemctl enable docker",
+#      "sudo curl -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"",
+#      "sudo chmod +x kubectl",
+#      "sudo mv kubectl /usr/local/bin/",
+#      "curl -LO \"https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm\"",
+#      "sudo rpm -ivh minikube-latest.x86_64.rpm",
+#      "minikube start --driver=docker"
+#    ]
+#  }
+#}
 
 #module "minikube" {
 #  source = "github.com/scholzj/terraform-aws-minikube"
