@@ -94,6 +94,22 @@ module "ec2_instance" {
   key_name             = "minikube"
   subnet_id            = element(lookup(module.vpc, "public_subnets", null), 0)
 
+  user_data = <<-EOT
+    #!/bin/bash
+    sudo yum update -y
+    sudo yum install -y curl conntrack-tools
+    sudo dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+    sudo dnf install -y docker-ce docker-ce-cli containerd.io
+    sudo systemctl start docker
+    sudo systemctl enable docker
+    sudo curl -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\"
+    sudo chmod +x kubectl
+    sudo mv kubectl /usr/local/bin/
+    curl -LO \"https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm\"
+    sudo rpm -ivh minikube-latest.x86_64.rpm
+    minikube start --driver=docker
+    EOT
+
   tags = {
     Terraform   = "true"
     Environment = "dev"
