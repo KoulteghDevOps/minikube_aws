@@ -31,14 +31,14 @@ resource "tls_private_key" "rsa" {
 resource "aws_security_group" "allow_tls" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = module.vpc.vpc_default
 
   ingress {
     description = "SSH from VPC"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = element(lookup(module.vpc, "public_subnets", null), 0) #[aws_vpc.main.cidr_block]
+    cidr_blocks = element(lookup(module.vpc, "cidr", null), 0) #[aws_vpc.main.cidr_block]
   }
 
   ingress {
@@ -46,7 +46,7 @@ resource "aws_security_group" "allow_tls" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = element(lookup(module.vpc, "public_subnets", null), 0) #[aws_vpc.main.cidr_block]
+    cidr_blocks = element(lookup(module.vpc, "cidr", null), 0) #[aws_vpc.main.cidr_block]
   }
 
   egress {
@@ -190,3 +190,9 @@ module "ec2_instance" {
 #    ]
 #  }
 #}
+
+#user_data = <<-EOF
+#  #!/bin/bash
+#  echo "Hello, World!" > /tmp/hello.txt
+#  # Additional user data commands go here
+#EOF
