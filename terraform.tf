@@ -64,6 +64,64 @@ resource "aws_security_group" "allow_tls" {
   }
 }
 
+# Source VPC
+resource "aws_vpc" "source" {
+  cidr_block = "10.0.0.0/16"  # Update with your desired source VPC CIDR block
+
+  tags = {
+    Name = "Source VPC"
+  }
+}
+
+# Destination VPC
+resource "aws_vpc" "destination" {
+  cidr_block = "172.31.0.0/16"  # Update with your desired destination VPC CIDR block
+
+  tags = {
+    Name = "Destination VPC"
+  }
+}
+
+# VPC Peering Connection
+resource "aws_vpc_peering_connection" "peering" {
+  vpc_id        = aws_vpc.source.id
+  peer_vpc_id   = aws_vpc.destination.id
+
+  auto_accept   = true
+
+  tags = {
+    Name = "VPC Peering Connection"
+  }
+}
+
+# Route Tables - Source VPC
+resource "aws_route_table" "source" {
+  vpc_id = aws_vpc.source.id
+
+  route {
+    cidr_block = aws_vpc.destination.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.peering.id
+  }
+
+  tags = {
+    Name = "Source VPC Route Table"
+  }
+}
+
+# Route Tables - Destination VPC
+resource "aws_route_table" "destination" {
+  vpc_id = aws_vpc.destination.id
+
+  route {
+    cidr_block = aws_vpc.source.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.peering.id
+  }
+
+  tags = {
+    Name = "Destination VPC Route Table"
+  }
+}
+
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
